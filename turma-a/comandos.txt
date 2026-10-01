@@ -1,0 +1,61 @@
+# ==============================================================================
+# ATIVIDADE DOCKER EM SALA - TURMA A (30/09/2026)
+# Aluno: Roberto Yanez Sanz
+# RA: 23079491-2
+# Código da Aula: 3333
+# ==============================================================================
+
+# 1. Conferir o Docker
+PS C:\Users\rober\Downloads\turma-a\site> docker info
+Client:
+ Version:    28.3.2
+ Context:    desktop-linux
+ Debug Mode: false
+ Plugins:
+  ai: Docker AI Agent - Ask Gordon (Docker Inc.)
+    Version:  v1.6.0
+  buildx: Docker Buildx (Docker Inc.)
+    Version:  v0.25.0-desktop.1
+  compose: Docker Compose (Docker Inc.)
+    Version:  v2.38.2-desktop.1
+
+Server:
+ Containers: 35
+  Running: 33
+  Paused: 0
+  Stopped: 2
+ Images: 19
+ Server Version: 28.3.2
+ Storage Driver: overlayfs
+ OSType: linux
+ Architecture: x86_64
+
+
+# 2. Execução inicial do container na porta 8082 com Bind Mount
+PS C:\Users\rober\Downloads\turma-a\site> $pastaSite = (Resolve-Path "C:\Users\rober\Downloads\turma-a\site").Path
+PS C:\Users\rober\Downloads\turma-a\site> docker run -d --name docker-a -p 127.0.0.1:8082:80 --mount "type=bind,source=$pastaSite,target=/usr/share/nginx/html,readonly" nginx:alpine
+e41f83bd605907d31c7323ad0c3001e5262ddd2d851088d2546ea8703b8d3c00
+
+
+# 3. Parar, remover e recriar na porta 8092 após edição do arquivo
+PS C:\Users\rober\Downloads\turma-a\site> docker stop docker-a
+docker-a
+
+PS C:\Users\rober\Downloads\turma-a\site> docker rm docker-a
+docker-a
+
+PS C:\Users\rober\Downloads\turma-a\site> $pastaSite = (Resolve-Path "C:\Users\rober\Downloads\turma-a\site").Path
+PS C:\Users\rober\Downloads\turma-a\site> docker run -d --name docker-a -p 127.0.0.1:8092:80 --mount "type=bind,source=$pastaSite,target=/usr/share/nginx/html,readonly" nginx:alpine
+b3b9fa78b49833cfaa39a2b592cbcbf2de8354e0f79968df14e4a8f2d9230501
+
+
+# 4. Parar container e checar status final (inspect e ps -a)
+PS C:\Users\rober\Downloads\turma-a\site> docker stop docker-a
+docker-a
+
+PS C:\Users\rober\Downloads\turma-a\site> docker inspect --format '{{.State.Status}}' docker-a
+exited
+
+PS C:\Users\rober\Downloads\turma-a\site> docker ps -a --filter name=docker-a
+CONTAINER ID   IMAGE          COMMAND                  CREATED              STATUS                      PORTS     NAMES
+b3b9fa78b498   nginx:alpine   "/docker-entrypoint.…"   About a minute ago   Exited (137) 1 second ago             docker-a
